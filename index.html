@@ -112,13 +112,6 @@
 
     .success{ background:#EEFFF5; color:#0A5A2A }
 
-    .divider{ display:grid; grid-template-columns: 1fr auto 1fr; align-items:center; gap:10px; color:var(--muted); font-size:12px; font-weight:700 }
-    .divider::before,.divider::after{ content:""; height:2px; background: var(--line); opacity:.15 }
-
-    .oauth{ display:grid; gap:10px; grid-template-columns: 1fr 1fr }
-    .oauth button{ background:#fff; border:3px solid var(--line); padding:10px; border-radius:14px; box-shadow:0 6px 0 var(--line); cursor:pointer; font-weight:800 }
-    .oauth button:active{ transform: translateY(2px); box-shadow:0 4px 0 var(--line) }
-
     /* Cartoon illustration */
     .art.card{ display:grid; place-items:center; padding:0; min-height: 320px }
     .bubbles{ position:absolute; inset:0; pointer-events:none; }
@@ -142,6 +135,10 @@
     @keyframes floaty{ 0%{ transform: translateY(0)} 50%{ transform: translateY(-12px)} 100%{ transform: translateY(0)} }
 
     footer{ text-align:center; color:var(--muted); font-weight:700; font-size:12px; margin-top:6px }
+
+    /* Mobile eye idle animation */
+    .mobile .eye{ animation: eye-bob 2.2s ease-in-out infinite }
+    @keyframes eye-bob{ 0%{ transform: translate(0,0)} 50%{ transform: translate(6px,-6px)} 100%{ transform: translate(0,0)} }
   </style>
 </head>
 <body>
@@ -152,11 +149,11 @@
         <div class="brand">
           <div class="brand-logo" aria-hidden="true"><span>💬</span></div>
           <div>
-            <h1>Welcome back!</h1>
-            <small>Bubble Login · Cartoon clean UI</small>
+            <h1>Sign in to Bubble</h1>
+            <small>Cartoon‑clean, fast & friendly</small>
           </div>
         </div>
-        <div class="tag">✨ Optimized for Android & Desktop</div>
+        <div class="tag">🫧 Tap‑friendly · Works great on mobile & desktop</div>
 
         <div id="alert" class="notice" role="alert"></div>
 
@@ -187,15 +184,9 @@
 
           <button class="btn" id="submitBtn" type="submit">Sign In</button>
 
-          <div class="divider">or continue with</div>
-          <div class="oauth">
-            <button type="button" onclick="oauthClick('Google')">Google</button>
-            <button type="button" onclick="oauthClick('GitHub')">GitHub</button>
-          </div>
-
           <div class="links" style="margin-top:10px">
             <span>New here? <a href="#" onclick="demoSignup(); return false;">Create account</a></span>
-            <a href="#" onclick="demoHelp(); return false;">Help</a>
+            <a id="helpLink" href="https://t.me/your_handle" target="_blank" rel="noopener">Help</a>
           </div>
         </form>
       </section>
@@ -284,8 +275,10 @@
         if(password !== 'bubblepop') throw new Error('Invalid credentials');
 
         showSuccess('Welcome back! Redirecting…');
-        // Redirect
-        setTimeout(()=>{ window.location.href = './dashboard.html'; }, 600);
+        // Redirect (skipped in self-test mode)
+        if(!window.__TEST__){
+          setTimeout(()=>{ window.location.href = './dashboard.html'; }, 600);
+        }
       }catch(err){
         showError(err.message || 'Could not sign you in.');
       }finally{
@@ -295,9 +288,8 @@
     });
 
     // Demo link handlers
-    function oauthClick(provider){ showError(provider + ' login not wired yet — plug your OAuth here.'); }
     function demoSignup(){ showError('Sign up screen not included — route this link to your signup page.'); }
-    function demoHelp(){ showError('Need help? Point this to your help center or open a support chat.'); }
+    function demoForgot(){ showError('Forgot password flow not wired — link this to your reset page.'); }
 
     // ===== Optional: store remembered email locally (Android-friendly) =====
     const rememberEl = document.getElementById('remember');
@@ -310,17 +302,64 @@
       else{ localStorage.removeItem('bubble.email'); }
     });
 
-    // ===== Tiny eye-follow effect (cartoony fun) =====
+    // ===== Mascot eyes =====
     const eyes = document.querySelectorAll('.eye');
-    document.addEventListener('pointermove', (e)=>{
-      eyes.forEach(eye => {
-        const rect = eye.getBoundingClientRect();
-        const cx = rect.left + rect.width/2; const cy = rect.top + rect.height/2;
-        const angle = Math.atan2(e.clientX - cx, e.clientY - cy);
-        const dx = Math.sin(angle) * 12; const dy = Math.cos(angle) * 12;
-        eye.style.transform = `translate(${dx}px, ${-dy}px)`;
-      })
-    });
+    const isCoarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+    if(!isCoarse){
+      // Desktop / precise pointer: follow the cursor
+      document.addEventListener('pointermove', (e)=>{
+        eyes.forEach(eye => {
+          const rect = eye.getBoundingClientRect();
+          const cx = rect.left + rect.width/2; const cy = rect.top + rect.height/2;
+          const angle = Math.atan2(e.clientX - cx, e.clientY - cy);
+          const dx = Math.sin(angle) * 12; const dy = Math.cos(angle) * 12;
+          eye.style.transform = `translate(${dx}px, ${-dy}px)`;
+        });
+      });
+    } else {
+      // Mobile / coarse pointer: idle animation
+      document.body.classList.add('mobile');
+    }
+
+    // ===== Lightweight self-tests (run with ?test or localStorage flag) =====
+    function runSelfTests(){
+      const results = [];
+      const ok = (name, pass, note='') => { results.push({name, pass, note}); console[pass?'log':'error']((pass?'✅':'❌')+' '+name+(note?` — ${note}`:'')); };
+
+      try{ ok('Email input present', !!emailEl); }catch(e){ ok('Email input present', false, e.message); }
+      try{ ok('Password input present', !!pwdEl); }catch(e){ ok('Password input present', false, e.message); }
+      try{ ok('Submit button present', !!submitBtn); }catch(e){ ok('Submit button present', false, e.message); }
+
+      // Validate client checks
+      emailEl.value = 'not-an-email'; pwdEl.value = '123456';
+      form.dispatchEvent(new Event('submit', {cancelable:true, bubbles:true}));
+      ok('Invalid email rejected', /looks off/i.test(alertBox.textContent));
+
+      // Valid email, wrong password
+      emailEl.value = 'test@example.com'; pwdEl.value = 'wrong';
+      form.dispatchEvent(new Event('submit', {cancelable:true, bubbles:true}));
+      setTimeout(()=>{
+        ok('Wrong password shows error', /invalid credentials/i.test(alertBox.textContent));
+        // Valid success path (no redirect during test)
+        window.__TEST__ = true;
+        emailEl.value = 'user@example.com'; pwdEl.value = 'bubblepop';
+        form.dispatchEvent(new Event('submit', {cancelable:true, bubbles:true}));
+        setTimeout(()=>{
+          ok('Correct password shows success', /welcome back/i.test(alertBox.textContent));
+          console.log('Self-tests complete:', results);
+        }, 1000);
+      }, 1200);
+    }
+
+    (function maybeRunTests(){
+      const params = new URLSearchParams(location.search);
+      if(params.has('test') || localStorage.getItem('bubble.selftest')==='1'){
+        console.log('Running Bubble Login self-tests…');
+        runSelfTests();
+      } else {
+        console.log('Tip: add ?test to the URL or set localStorage key "bubble.selftest" = "1" to run self-tests.');
+      }
+    })();
   </script>
 </body>
 </html>
