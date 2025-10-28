@@ -11,7 +11,6 @@
 <style>
   *,*::before,*::after{box-sizing:border-box}
   :root{
-    /* New Color Scheme: Dark Gray/Gray/White/Mint Green */
     --mint-green: #98ff98;
     --dark-gray: #1a1a1a;
     --medium-gray: #2c2c2c;
@@ -19,7 +18,7 @@
     --text-color: var(--white);
     --button-color: var(--mint-green);
     --hover-color: #66cc66;
-    --glass: rgba(255, 255, 255, 0.15); /* Lighter glass effect on dark background */
+    --glass: rgba(255, 255, 255, 0.15);
   }
   html,body{
     height:100%;
@@ -28,7 +27,7 @@
   body{
     background:var(--dark-gray);
     color:var(--text-color);
-    font-family:system-ui, -apple-system, Segoe UI, Roboto, Poppins, sans-serif;
+    font-family:'Poppins', sans-serif;
     overflow:hidden;
   }
 
@@ -39,14 +38,13 @@
     bottom:0;
     min-width:100%;
     min-height:100%;
-    width:auto;
-    height:auto;
+    object-fit:cover;
     z-index:-1;
     filter:grayscale(100%);
-    opacity: 0.5; /* Slightly reduced opacity so the form stands out better */
+    opacity:0.5;
   }
 
-  /* ===== Mute/Unmute Button & Help Button Styling ===== */
+  /* ===== Buttons ===== */
   #mute-toggle, #help-button{
     position:fixed;
     top:20px;
@@ -62,7 +60,6 @@
     justify-content:center;
     z-index:10;
     transition:background .2s;
-    font-family:'Poppins', sans-serif;
     font-weight:500;
   }
   #mute-toggle{
@@ -77,7 +74,7 @@
   }
   #mute-toggle:hover, #help-button:hover{
     background:var(--medium-gray);
-    box-shadow: 0 0 10px rgba(152, 255, 152, 0.5); /* Mint green glow on hover */
+    box-shadow:0 0 10px rgba(152,255,152,0.5);
   }
 
   /* ===== Login box ===== */
@@ -96,24 +93,21 @@
     border-radius:12px;
     backdrop-filter: blur(8px);
     background:var(--glass);
-    box-shadow: 0 10px 60px rgba(0,0,0,.5);
+    box-shadow:0 10px 60px rgba(0,0,0,.5);
     text-align:center;
-    border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle white border */
+    border:1px solid rgba(255,255,255,0.2);
   }
   .login-box h2{
     margin:0 0 10px;
-    font-family:'Poppins', sans-serif;
     color:var(--button-color);
     font-weight:600;
   }
-
   label{
     display:block;
     text-align:left;
     font-weight:500;
     font-size:.9rem;
     margin:14px 6px 6px;
-    font-family:'Poppins', sans-serif;
   }
   input[type="text"],
   input[type="password"]{
@@ -123,45 +117,40 @@
     margin-bottom:10px;
     border-radius:6px;
     border:1px solid rgba(255,255,255,.4);
-    background:rgba(0,0,0,.15); /* Darker input background */
+    background:rgba(0,0,0,.15);
     color:var(--text-color);
     outline:none;
-    font-family:'Poppins', sans-serif;
-    transition: border .2s;
+    transition:border .2s;
   }
   input[type="text"]:focus,
-  input[type="password"]:focus {
-    border: 1px solid var(--button-color);
-    box-shadow: 0 0 5px rgba(152, 255, 152, 0.5);
+  input[type="password"]:focus{
+    border:1px solid var(--button-color);
+    box-shadow:0 0 5px rgba(152,255,152,0.5);
   }
-  input::placeholder{ color:rgba(255,255,255,.5) }
+  input::placeholder{color:rgba(255,255,255,.5)}
 
-  /* Submit button styling */
   #loginSubmitBtn{
     width:100%;
     height:45px;
     margin-top:8px;
     border:none;
     border-radius:6px;
-
-> Darius V:
-cursor:pointer;
+    cursor:pointer;
     font-weight:600;
-    font-family:'Poppins', sans-serif;
     background:var(--button-color);
-    color:var(--dark-gray); /* Dark text on mint button */
+    color:var(--dark-gray);
     transition:background .2s, box-shadow .2s;
   }
   #loginSubmitBtn:hover{
     background:var(--hover-color);
-    box-shadow: 0 0 15px var(--button-color);
+    box-shadow:0 0 15px var(--button-color);
   }
 
   .login-links{
     margin-top:12px;
     display:flex;
     align-items:center;
-    justify-content:center;
+    justify-content:flex-end;
     gap:14px;
     flex-wrap:wrap;
     padding:6px 0 0;
@@ -171,7 +160,6 @@ cursor:pointer;
     text-decoration:none;
     font-size:.9rem;
     font-weight:500;
-    font-family:'Poppins', sans-serif;
     opacity:.9;
     transition:opacity .2s;
   }
@@ -179,39 +167,37 @@ cursor:pointer;
     opacity:1;
     color:var(--button-color);
   }
-  .login-links .spacer{
-    width:1px; height:16px; background:rgba(255,255,255,.3);
+
+  .signup-text{
+    margin-top:20px;
+    font-size:.9rem;
+    color:rgba(255,255,255,0.7);
+  }
+  .signup-text a{
+    color:var(--button-color);
+    text-decoration:none;
+    font-weight:600;
+    transition:color .2s;
+  }
+  .signup-text a:hover{
+    color:var(--hover-color);
+    text-decoration:underline;
   }
 
-  .signup-text {
-    margin-top: 20px;
-    font-size: .9rem;
-    color: rgba(255, 255, 255, 0.7);
-  }
-  .signup-text a {
-    color: var(--button-color);
-    text-decoration: none;
-    font-weight: 600;
-    transition: color .2s;
-  }
-  .signup-text a:hover {
-    color: var(--hover-color);
-    text-decoration: underline;
-  }
-
-  /* small screens */
-  @media (max-width:600px){
-    .login-box{ max-width:340px }
+  @media(max-width:600px){
+    .login-box{max-width:340px}
   }
 </style>
 </head>
 <body>
 
-  <video id="background-video" autoplay loop preload="auto">
-    <source src="bg.mp4" type="video/mp4">
+  <!-- Background video -->
+  <video id="background-video" autoplay loop muted playsinline preload="auto">
+    <source src="video/bg.mp4" type="video/mp4">
     Your browser does not support the video tag.
   </video>
 
+  <!-- Buttons -->
   <button id="mute-toggle" aria-label="Toggle Mute">
     <i class="fas fa-volume-off"></i>
   </button>
@@ -220,6 +206,7 @@ cursor:pointer;
     <i class="fas fa-question-circle"></i> Help
   </a>
 
+  <!-- Login content -->
   <div class="wrap">
     <div class="login-box">
       <h2>Sign In</h2>
@@ -230,15 +217,15 @@ cursor:pointer;
         <label for="password">Password</label>
         <input type="password" id="password" name="password" placeholder="Password" required>
 
-        <div class="login-links" style="justify-content: flex-end;">
-            <a href="#">Forgot Password</a>
+        <div class="login-links">
+          <a href="#">Forgot Password</a>
         </div>
 
         <button type="submit" id="loginSubmitBtn">Login</button>
       </form>
 
       <p class="signup-text">
-          Don't have an account? <a href="YOUR_SIGNUP_PAGE_LINK_HERE">Sign Up</a>
+        Don't have an account? <a href="YOUR_SIGNUP_PAGE_LINK_HERE">Sign Up</a>
       </p>
     </div>
   </div>
@@ -248,12 +235,9 @@ cursor:pointer;
     const muteToggle = document.getElementById('mute-toggle');
     const muteIcon = muteToggle.querySelector('i');
     const loginForm = document.getElementById('loginForm');
-    let hasLoopedOnce = false;
     let isVideoMuted = true;
 
-    // --- Mute/Unmute Logic ---
-
-    // 1. Initial State: Set the video to be muted on load
+    // Initial mute state
     video.muted = isVideoMuted;
     updateMuteButtonIcon();
 
@@ -273,37 +257,14 @@ cursor:pointer;
       }
     }
 
-    // Attach click listener to the mute button
     muteToggle.addEventListener('click', toggleMute);
 
-    // 2. Auto-Unmute after the first loop logic
-    video.addEventListener('ended', function() {
-      if (!hasLoopedOnce) {
-        hasLoopedOnce = true;
-        
-        // Unmute for subsequent loops (if the user hasn't manually muted it)
-        if (video.muted) {
-            isVideoMuted = false;
-            video.muted = false;
-            updateMuteButtonIcon();
-        }
-      }
+    // Simple fake login
+    loginForm.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      alert('Login attempted for user: ' + username);
     });
-
-    // --- Form Submission Action ---
-
-    loginForm.addEventListener('submit', function(event) {
-        event.preventDefault(); // Stop the default form submission action
-
-> Darius V:
-const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-        
-        // CUSTOM ACTION: Replace this with your actual login request
-        console.log('Attempting Login with:', username, password);
-        alert('Login attempted for user: ' + username + '. Check console for details.');
-    });
-
   </script>
 
 </body>
